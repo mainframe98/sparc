@@ -27,7 +27,7 @@ runs:
       if: steps.cache-spc-repo.outputs.cache-hit != 'true'
       working-directory: 'spc/'
       shell: bash
-      run: composer install --no-interactive --no-dev --no-progress --ansi
+      run: composer install --no-interaction --no-dev --no-progress --ansi
     - name: Cache spc (php)
       id: cache-spc-php
       uses: actions/cache@v6
