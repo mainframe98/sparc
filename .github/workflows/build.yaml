@@ -47,7 +47,7 @@ jobs:
           retention-days: 3
           archive: false
       - name: Test binary
-        run: output/arc version
+        run: output/arc version --
   linux-aarch64:
     runs-on: ubuntu-26.04-arm
     steps:
@@ -82,7 +82,7 @@ jobs:
           retention-days: 3
           archive: false
       - name: Test binary
-        run: output/arc version
+        run: output/arc version --
   macos-aarch64:
     runs-on: macos-latest
     steps:
