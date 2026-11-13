@@ -20,12 +20,15 @@ jobs:
           path: spc_cache/
       - name: sparc build
         run: ./build-sparc-docker-linux.sh
+      - name: Name binaries to include os and arch
+        run: |
+          mv ./output/arc ./output/arc-linux-x86_64
+          mv ./output/php ./output/php-linux-x86_64
       - name: Upload arc
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/arc
-          name: arc-linux-x86_64
+          path: ./output/arc-linux-x86_64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -33,8 +36,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/php
-          name: php-linux-x86_64
+          path: ./output/php-linux-x86_64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -63,12 +65,15 @@ jobs:
           path: spc_cache/
       - name: sparc build
         run: ./build-sparc-docker-linux.sh
+      - name: Name binaries to include os and arch
+        run: |
+          mv ./output/arc ./output/arc-linux-aarch64
+          mv ./output/php ./output/php-linux-aarch64
       - name: Upload arc
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/arc
-          name: arc-linux-aarch64
+          path: ./output/arc-linux-aarch64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -76,8 +81,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/arc
-          name: php-linux-aarch64
+          path: ./output/php-linux-aarch64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -101,12 +105,15 @@ jobs:
           os: 'macos'
       - name: sparc build
         run: php ./build-sparc.php
+      - name: Name binaries to include os and arch
+        run: |
+          mv ./output/arc ./output/arc-macos-aarch64
+          mv ./output/php ./output/php-macos-aarch64
       - name: Upload arc
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/arc
-          name: arc-macos-aarch64
+          path: ./output/arc-macos-aarch64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -114,8 +121,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/php
-          name: php-macos-aarch64
+          path: ./output/php-macos-aarch64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -139,12 +145,15 @@ jobs:
           os: 'macos'
       - name: sparc build
         run: php ./build-sparc.php
+      - name: Name binaries to include os and arch
+        run: |
+          mv ./output/arc ./output/arc-macos-x86_64
+          mv ./output/php ./output/php-macos-x86_64
       - name: Upload arc
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/arc
-          name: arc-macos-x86_64
+          path: ./output/arc-macos-x86_64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -152,8 +161,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
-          path: ./output/php
-          name: php-macos-x86_64
+          path: ./output/php-macos-x86_64
           compression-level: 0
           retention-days: 3
           archive: false
@@ -215,7 +223,7 @@ jobs:
       - name: Test binary
         run: output/arc.exe version --
   create-release:
-    needs: [ linux-x86_64, linux-aarch64, windows-x86_64, macos-aarch64 ]
+    needs: [ linux-x86_64, linux-aarch64, windows-x86_64, macos-aarch64, macos-x86_64 ]
     runs-on: ubuntu-slim
     if: github.ref_type == 'tag'
     steps:
