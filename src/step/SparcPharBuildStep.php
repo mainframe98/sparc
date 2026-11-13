@@ -64,6 +64,13 @@ final class SparcPharBuildStep extends SparcBuildStep {
   protected function doBuild(PhutilArgumentParser $args): void {
     $phar_path = $this->getPharTarget();
 
+    $output_dir = dirname($phar_path);
+
+    // The Phar extension requires that the directory exists.
+    if (!Filesystem::pathExists($output_dir)) {
+      Filesystem::createDirectory($output_dir);
+    }
+
     // Remove existing .phar or the existing phar will be appended.
     Filesystem::remove($phar_path);
 
