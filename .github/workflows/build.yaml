@@ -1,0 +1,242 @@
+name: Release builds
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-26.04
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+      - name: Cache spc (repo)
+        id: cache-spc-php
+        uses: actions/cache@v6
+        with:
+          key: spc-repo-linux-x86_64-2.8.5
+          path: spc_cache/
+      - name: sparc build
+        run: ./build-sparc-docker-linux.sh
+      - name: Upload arc
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc
+          name: arc-linux-x86_64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Upload php
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/php
+          name: php-linux-x86_64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Upload phar
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc.phar
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Test binary
+        run: output/arc version
+  linux-aarch64:
+    runs-on: ubuntu-26.04-arm
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+      - name: Cache spc (repo)
+        id: cache-spc-php
+        uses: actions/cache@v6
+        with:
+          key: spc-repo-linux-aarch64-2.8.5
+          path: spc_cache/
+      - name: sparc build
+        run: ./build-sparc-docker-linux.sh
+      - name: Upload arc
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc
+          name: arc-linux-aarch64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Upload php
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc
+          name: php-linux-aarch64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Test binary
+        run: output/arc version
+  macos-aarch64:
+    runs-on: macos-latest
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: iconv, mbstring, pcntl, phar, posix, tokenizer, zip, zlib
+      - name: Setup spc
+        uses: $/.github/actions/setup-spc
+        with:
+          os: 'macos'
+      - name: sparc build
+        run: php ./build-sparc.php
+      - name: Upload arc
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc
+          name: arc-macos-aarch64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Upload php
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/php
+          name: php-macos-aarch64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Test binary
+        run: output/arc version --
+  macos-x86_64:
+    runs-on: macos-26-intel
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: iconv, mbstring, pcntl, phar, posix, tokenizer, zip, zlib
+      - name: Setup spc
+        uses: $/.github/actions/setup-spc
+        with:
+          os: 'macos'
+      - name: sparc build
+        run: php ./build-sparc.php
+      - name: Upload arc
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc
+          name: arc-macos-x86_64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Upload php
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/php
+          name: php-macos-x86_64
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Test binary
+        run: output/arc version --
+  windows-x86_64:
+    runs-on: windows-2025-vs2026
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: iconv, mbstring, phar, tokenizer, zip, zlib
+      - name: Install php-sdk-binary-tools
+        uses: actions/checkout@v7
+        with:
+          repository: 'php/php-sdk-binary-tools'
+          ref: 'master'
+          path: php-sdk-binary-tools
+      - name: Setup spc
+        uses: $/.github/actions/setup-spc
+        with:
+          os: 'win'
+      - name: Setup Visual Studio developer shell
+        uses: humbletim/vsdevenv-shell@v2
+      - name: sparc build
+        shell: vsdevenv x64 cmd {0}
+        run: build-sparc-windows.bat
+      - name: Run Inno Setup compiler
+        run: iscc "windows/installer.iss"
+      - name: Upload arc
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc.exe
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Upload php
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/php.exe
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Upload installer
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          path: ./output/arc-setup.exe
+          compression-level: 0
+          retention-days: 3
+          archive: false
+      - name: Test binary
+        run: output/arc.exe version --
+  create-release:
+    needs: [ linux-x86_64, linux-aarch64, windows-x86_64, macos-aarch64 ]
+    runs-on: ubuntu-slim
+    if: github.ref_type == 'tag'
+    steps:
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+      - name: Prepare release
+        uses: softprops/action-gh-release@v3
+        with:
+          draft: 'true'
+          files: |
+            arc.phar
+            arc-macos-aarch64
+            arc-macos-x86_64
+            arc-linux-aarch64
+            arc-linux-x86_64
+            php-macos-aarch64
+            php-macos-x86_64
+            php-linux-aarch64
+            php-linux-x86_64
+            php.exe
+            arc.exe
+            arc-setup.exe

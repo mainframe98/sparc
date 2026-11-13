@@ -1,0 +1,48 @@
+diff --git a/src/repository/api/ArcanistMercurialAPI.php b/src/repository/api/ArcanistMercurialAPI.php
+index 11f1d985..ed3c0702 100644
+--- a/src/repository/api/ArcanistMercurialAPI.php
++++ b/src/repository/api/ArcanistMercurialAPI.php
+@@ -1062,10 +1062,7 @@ final class ArcanistMercurialAPI extends ArcanistRepositoryAPI {
+   private function getMercurialExtensionFlag($extension) {
+     switch ($extension) {
+       case 'arc-hg':
+-        $path = phutil_get_library_root('arcanist');
+-        $path = dirname($path);
+-        $path = $path.'/support/hg/arc-hg.py';
+-        $ext_config = 'extensions.arc-hg='.$path;
++        $ext_config = 'extensions.arc-hg='.$this->ensureArcHgExists();
+         break;
+       case 'rebase':
+         $ext_config = 'extensions.rebase=';
+@@ -1084,6 +1081,31 @@ final class ArcanistMercurialAPI extends ArcanistRepositoryAPI {
+     return csprintf('--config %s', $ext_config);
+   }
+ 
++  /**
++   * Ensures ~/.local/bin/arc-hg.py exists or throws an exception
++   * explaining why that failed.
++   *
++   * @return string
++   */
++  private function ensureArcHgExists(): string {
++    $home = getenv('HOME');
++
++    if (!phutil_nonempty_string($home)) {
++      throw new PhutilArgumentUsageException(
++        pht(
++          'The "HOME" environment variable is not defined, so this command '.
++          'can not identify where to install arc extensions for Mercurial.'));
++    }
++
++    $path = $home.'/.local/bin/arc-hg.py';
++
++    Filesystem::writeFileIfChanged(
++      $path,
++      Filesystem::readFile(Phar::running(false).'/support/hg/arc-hg.py'));
++
++    return $path;
++  }
++
+   /**
+    * Produces the arguments that should be passed to Mercurial command
+    * execution that enables a desired extension.

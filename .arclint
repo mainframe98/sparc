@@ -1,0 +1,59 @@
+{
+  "exclude": [
+    "(^arcanist/)",
+    "(^patches/)",
+    "(^spc/)",
+    "(^spc_cache/)"
+  ],
+  "linters": {
+    "chmod": {
+      "type": "chmod"
+    },
+    "filename": {
+      "type": "filename"
+    },
+    "generated": {
+      "type": "generated"
+    },
+    "merge-conflict": {
+      "type": "merge-conflict"
+    },
+    "nolint": {
+      "type": "nolint"
+    },
+    "phpast": {
+      "type": "phpast",
+      "include": "(\\.php$)",
+      "standard": "phutil.phpast",
+      "phpast.php-version": "8.2.0"
+    },
+    "phutil-library": {
+      "type": "phutil-library",
+      "include": "(\\.php$)"
+    },
+    "text": {
+      "type": "text",
+      "exclude": [
+        "(^src/(.*/)?__tests__/[^/]+/.*\\.(txt|json|expect)|/Makefile\\z)"
+      ]
+    },
+    "text-without-length": {
+      "type": "text",
+      "include": [
+        "(^src/(.*/)?__tests__/[^/]+/.*\\.(txt|json|expect))"
+      ],
+      "severity": {
+        "3": "disabled"
+      }
+    },
+    "text-without-tabs": {
+      "type": "text",
+      "include": [
+        "(/Makefile\\z)"
+      ],
+      "severity": {
+        "2": "disabled"
+      }
+    }
+  }
+}

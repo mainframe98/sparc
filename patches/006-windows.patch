@@ -1,0 +1,13 @@
+diff --git a/src/runtime/ArcanistRuntime.php b/src/runtime/ArcanistRuntime.php
+index b74e6523..0b5c2d59 100644
+--- a/src/runtime/ArcanistRuntime.php
++++ b/src/runtime/ArcanistRuntime.php
+@@ -535,7 +535,7 @@ final class ArcanistRuntime {
+   }
+ 
+   private function newToolset(array $argv) {
+-    $binary = basename($argv[0]);
++    $binary = basename($argv[0], '.exe');
+ 
+     $toolsets = ArcanistToolset::newToolsetMap();
+     if (!isset($toolsets[$binary])) {

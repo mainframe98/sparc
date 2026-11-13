@@ -1,0 +1,39 @@
+diff --git a/src/repository/api/ArcanistSubversionAPI.php b/src/repository/api/ArcanistSubversionAPI.php
+index 28492cc2..ef93e42d 100644
+--- a/src/repository/api/ArcanistSubversionAPI.php
++++ b/src/repository/api/ArcanistSubversionAPI.php
+@@ -312,13 +312,33 @@ final class ArcanistSubversionAPI extends ArcanistRepositoryAPI {
+       return $this->buildLocalFuture(
+         array(
+           'diff --depth empty --diff-cmd %s -x -U%d %s',
+-          $diff_cmd,
++          $this->ensureBinarySafeDiffExists(),
+           $this->getDiffLinesOfContext(),
+           $path,
+         ));
+     }
+   }
+ 
++  private function ensureBinarySafeDiffExists(): string {
++    $home = getenv('HOME');
++
++    if (!phutil_nonempty_string($home)) {
++      throw new PhutilArgumentUsageException(
++        pht(
++          'The "HOME" environment variable is not defined, so this command '.
++          'can not identify where to install diff extensions for SVN.'));
++    }
++
++    $path = $home.'/.local/bin/arc-svn-binary-safe-diff.py';
++
++    Filesystem::writeFileIfChanged(
++      $path,
++      Filesystem::readFile(
++        Phar::running(false).'/scripts/repository/binary_safe_diff.sh'));
++
++    return $path;
++  }
++
+   public function primeSVNInfoResult($path, $result) {
+     $this->svnInfoRaw[$path] = $result;
+     return $this;

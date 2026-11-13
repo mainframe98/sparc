@@ -1,0 +1,88 @@
+diff --git a/src/toolset/workflow/ArcanistShellCompleteWorkflow.php b/src/toolset/workflow/ArcanistShellCompleteWorkflow.php
+index 0784e0d6..f210d4da 100644
+--- a/src/toolset/workflow/ArcanistShellCompleteWorkflow.php
++++ b/src/toolset/workflow/ArcanistShellCompleteWorkflow.php
+@@ -47,10 +47,6 @@ To update shell completion, run the same command:
+ 
+   $ arc shell-complete
+ 
+-You can update shell completion without reinstalling it by running:
+-
+-  $ arc shell-complete --generate
+-
+ You may need to update shell completion if:
+ 
+   - you install new toolsets; or
+@@ -71,11 +67,6 @@ EOTEXT
+         ->setHelp(
+           pht(
+             'Internal. Current term in the argument list being completed.')),
+-      $this->newWorkflowArgument('generate')
+-        ->setHelp(
+-          pht(
+-            'Regenerate shell completion rules, without installing any '.
+-            'configuration.')),
+       $this->newWorkflowArgument('shell')
+         ->setParameter('shell-name')
+         ->setHelp(
+@@ -131,7 +122,7 @@ EOTEXT
+ 
+     } else {
+       $should_install = true;
+-      $should_generate = true;
++      $should_generate = false;
+ 
+       if ($is_current) {
+         throw new PhutilArgumentUsageException(
+@@ -180,7 +171,8 @@ EOTEXT
+         'key' => 'bash',
+         'path' => '/bin/bash',
+         'file' => '.profile',
+-        'source' => 'hooks/bash-completion.sh',
++        'source' => 'rules/bash-rules.sh',
++        'completion-dir' => getenv('BASH_COMPLETION_USER_DIR'),
+       ),
+     );
+     $shells = ipull($shells, null, 'key');
+@@ -194,6 +186,7 @@ EOTEXT
+ 
+     $spec = $shells[$shell];
+     $file = $spec['file'];
++    $completion_dir = $spec['completion-dir'];
+     $home = getenv('HOME');
+ 
+     if (!$home || !phutil_nonempty_string($home)) {
+@@ -203,6 +196,24 @@ EOTEXT
+           'can not identify where to install shell completion.'));
+     }
+ 
++    if (!phutil_nonempty_string($completion_dir)) {
++      $shell_complete_path = $completion_dir;
++    } else {
++      if (!phutil_nonempty_string(getenv('XDG_DATA_HOME'))) {
++        $shell_complete_path = getenv('XDG_DATA_HOME');
++      } else {
++        $shell_complete_path = $home.'/.local/share';
++      }
++      $shell_complete_path .= "/$shell-completion";
++    }
++
++    $shell_complete_path .= 'arcanist-completion.sh';
++
++    Filesystem::writeFileIfChanged(
++      $shell_complete_path,
++      Filesystem::readFile(
++        $this->getShellPath($spec['source'])));
++
+     $file_path = getenv('HOME').'/'.$file;
+     $file_display = '~/'.$file;
+ 
+@@ -217,7 +228,7 @@ EOTEXT
+ 
+     $line = csprintf(
+       'source %R # arcanist-shell-complete',
+-      $this->getShellPath($spec['source']));
++      $shell_complete_path);
+ 
+     $matches = null;
+     $replace = preg_match(

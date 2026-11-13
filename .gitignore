@@ -1,0 +1,22 @@
+*.phar
+src/.phutil_module_cache
+output/*
+!output/.gitkeep
+# Allow users to keep spc here as a binary or a local checkout
+spc
+spc.exe
+spc-windows-x64.exe
+spc/
+# Windows needs the php sdk binary tools
+php-sdk-binary-tools/
+# spc creates directories in the working directory, which may be this directory
+source/
+downloads/
+pkgroot/
+buildroot/
+dist/
+support/
+log/
+# Docker mounts spc_cache/
+spc_cache/
+patches/.rebase.lock
