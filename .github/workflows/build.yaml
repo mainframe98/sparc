@@ -104,7 +104,7 @@ jobs:
         with:
           os: 'macos'
       - name: sparc build
-        run: php ./build-sparc.php
+        run: php -dphar.readonly=0 ./build-sparc.php
       - name: Name binaries to include os and arch
         run: |
           mv ./output/arc ./output/arc-macos-aarch64
@@ -144,7 +144,7 @@ jobs:
         with:
           os: 'macos'
       - name: sparc build
-        run: php ./build-sparc.php
+        run: php -dphar.readonly=0 ./build-sparc.php
       - name: Name binaries to include os and arch
         run: |
           mv ./output/arc ./output/arc-macos-x86_64
