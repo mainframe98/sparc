@@ -20,6 +20,8 @@ jobs:
           path: spc_cache/
       - name: sparc build
         run: ./build-sparc-docker-linux.sh
+      - name: Test binary
+        run: output/arc version --
       - name: Name binaries to include os and arch
         run: |
           mv ./output/arc ./output/arc-linux-x86_64
@@ -48,8 +50,6 @@ jobs:
           compression-level: 0
           retention-days: 3
           archive: false
-      - name: Test binary
-        run: output/arc version --
   linux-aarch64:
     runs-on: ubuntu-26.04-arm
     steps:
@@ -65,6 +65,8 @@ jobs:
           path: spc_cache/
       - name: sparc build
         run: ./build-sparc-docker-linux.sh
+      - name: Test binary
+        run: output/arc version --
       - name: Name binaries to include os and arch
         run: |
           mv ./output/arc ./output/arc-linux-aarch64
@@ -85,8 +87,6 @@ jobs:
           compression-level: 0
           retention-days: 3
           archive: false
-      - name: Test binary
-        run: output/arc version --
   macos-aarch64:
     runs-on: macos-latest
     steps:
@@ -105,6 +105,8 @@ jobs:
           os: 'macos'
       - name: sparc build
         run: php -dphar.readonly=0 ./build-sparc.php
+      - name: Test binary
+        run: output/arc version --
       - name: Name binaries to include os and arch
         run: |
           mv ./output/arc ./output/arc-macos-aarch64
@@ -125,8 +127,6 @@ jobs:
           compression-level: 0
           retention-days: 3
           archive: false
-      - name: Test binary
-        run: output/arc version --
   macos-x86_64:
     runs-on: macos-26-intel
     steps:
@@ -145,6 +145,8 @@ jobs:
           os: 'macos'
       - name: sparc build
         run: php -dphar.readonly=0 ./build-sparc.php
+      - name: Test binary
+        run: output/arc version --
       - name: Name binaries to include os and arch
         run: |
           mv ./output/arc ./output/arc-macos-x86_64
@@ -165,8 +167,6 @@ jobs:
           compression-level: 0
           retention-days: 3
           archive: false
-      - name: Test binary
-        run: output/arc version --
   windows-x86_64:
     runs-on: windows-2025-vs2026
     steps:
@@ -194,6 +194,8 @@ jobs:
       - name: sparc build
         shell: vsdevenv x64 cmd {0}
         run: build-sparc-windows.bat
+      - name: Test binary
+        run: output/arc.exe version --
       - name: Run Inno Setup compiler
         run: iscc "windows/installer.iss"
       - name: Upload arc
@@ -220,8 +222,6 @@ jobs:
           compression-level: 0
           retention-days: 3
           archive: false
-      - name: Test binary
-        run: output/arc.exe version --
   create-release:
     needs: [ linux-x86_64, linux-aarch64, windows-x86_64, macos-aarch64, macos-x86_64 ]
     runs-on: ubuntu-slim
