@@ -100,9 +100,12 @@ jobs:
           php-version: '8.4'
           extensions: iconv, mbstring, pcntl, phar, posix, tokenizer, zip, zlib
       - name: Setup spc
-        uses: $/.github/actions/setup-spc
+        uses: robinraju/release-downloader@v1
         with:
-          os: 'macos'
+          repository: crazywhalecc/static-php-cli
+          tag: '2.8.5'
+          fileName: spc-macos-aarch64.tar.gz
+          extract: true
       - name: sparc build
         run: php -dphar.readonly=0 ./build-sparc.php
       - name: Test binary
@@ -140,9 +143,12 @@ jobs:
           php-version: '8.4'
           extensions: iconv, mbstring, pcntl, phar, posix, tokenizer, zip, zlib
       - name: Setup spc
-        uses: $/.github/actions/setup-spc
+        uses: robinraju/release-downloader@v1
         with:
-          os: 'macos'
+          repository: crazywhalecc/static-php-cli
+          tag: '2.8.5'
+          fileName: spc-macos-x86_64.tar.gz
+          extract: true
       - name: sparc build
         run: php -dphar.readonly=0 ./build-sparc.php
       - name: Test binary
@@ -186,9 +192,11 @@ jobs:
           ref: 'master'
           path: php-sdk-binary-tools
       - name: Setup spc
-        uses: $/.github/actions/setup-spc
+        uses: robinraju/release-downloader@v1
         with:
-          os: 'win'
+          repository: crazywhalecc/static-php-cli
+          tag: '2.8.5'
+          fileName: spc-windows-x64.exe
       - name: Setup Visual Studio developer shell
         uses: humbletim/vsdevenv-shell@v2
       - name: sparc build
