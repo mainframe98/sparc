@@ -79,16 +79,25 @@ abstract class SparcSPCBuildStep extends SparcBuildStep {
     $path = $this->getSPCPath();
     if (phutil_is_windows() && str_ends_with($path, 'spc/bin/spc')) {
       // Running spc from source under Windows requires invoking it through PHP.
-      return phutil_passthru(
+      $future = new PhutilExecPassthru(
         'php -f %s -- %C',
         $path,
         vcsprintf($command, $arguments));
     } else {
-      return phutil_passthru(
+      $future = new PhutilExecPassthru(
         '%s %C',
         $path,
         vcsprintf($command, $arguments));
     }
+
+    if (getenv('GITHUB_TOKEN')) {
+      $future->setEnv(
+        array(
+          'GITHUB_TOKEN' => getenv('GITHUB_TOKEN'),
+        ));
+    }
+
+    return $future->resolve();
   }
 
   final protected function getExtensions() {

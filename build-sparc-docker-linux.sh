@@ -24,5 +24,6 @@ docker run \
   --user $(id -u):$(id -g) \
   --volume .:/sparc \
   --volume ./spc_cache:/spc_cache \
+  --env GITHUB_TOKEN \
   sparc:latest \
   "$@"

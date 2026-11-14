@@ -57,6 +57,13 @@ $specs = array(
     'name' => 'show-plan',
     'help' => pht('Show the default build plan.'),
   ),
+  array(
+    'name' => 'github-token',
+    'param' => 'token',
+    'help' => pht(
+      'Set the GitHub API token used by spc. '.
+      'Useful when it cannot be passed as an environment variable.'),
+  ),
 );
 
 $specs = array_merge(
@@ -110,6 +117,11 @@ if ($only || $skip) {
 
     exit(1);
   }
+}
+
+$github_token = $args->getArg('github-token');
+if ($github_token) {
+  putenv('GITHUB_TOKEN='.$github_token);
 }
 
 $target = $args->getArg('output-directory').'/'.$args->getArg('target');
