@@ -65,3 +65,12 @@ See the [Windows specific Readme file](windows/Readme.md).
 - `musl-tools`
 - `cmake`
 - `nasm`
+
+## Creating a new release
+
+* Pull latest changes from the stable branch of Arcanist.
+* Update the version in `overrides/ArcanistVersionWorkflow.php`
+* Commit the changes
+* Tag using `git tag -a vX.X.X`
+* Push the commit and tag using `git push --follow-tags`
+* After the pipeline has completed, undraft the created release
